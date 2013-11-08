@@ -34,6 +34,17 @@ PIM_FIXTURE_PATHS="
 "
 PIM_FIXTURES=`echo $PIM_FIXTURE_PATHS | sed -e "s# # --fixtures=#g" -e "s#^# --fixtures=#"`
 
+CRM_FIXTURE_PATHS="
+    src/OroCRM/Bundle/ContactBundle/DataFixtures
+    src/OroCRM/Bundle/SalesBundle/DataFixtures
+    src/OroCRM/Bundle/SalesBundle/DataFixtures
+    src/OroCRM/Bundle/SalesBundle/DataFixtures
+    src/OroCRM/Bundle/AccountBundle/DataFixtures
+    src/OroCRM/Bundle/ContactBundle/DataFixtures
+    src/OroCRM/Bundle/ContactBundle/DataFixtures
+"
+CRM_FIXTURES=`echo $CRM_FIXTURE_PATHS | sed -e "s# # --fixtures=#g" -e "s#^# --fixtures=#"`
+
 APP_ROOT=`dirname $0`
 DEFAULT_ENV="dev"
 
@@ -104,6 +115,8 @@ if [ $TASK = 'db' ] || [ $TASK = 'all' ]; then
     php app/console doctrine:fixtures:load $ORO_FIXTURES --no-interaction
     echo "Loading PIM fixtures"
     php app/console doctrine:fixtures:load $PIM_FIXTURES --no-interaction --append
+    echo "Loading CRM fixtures"
+    php app/console doctrine:fixtures:load $CRM_FIXTURES --no-interaction --append
     php app/console oro:entity-config:init
     php app/console oro:entity-extend:init
     php app/console oro:entity-extend:update-config
