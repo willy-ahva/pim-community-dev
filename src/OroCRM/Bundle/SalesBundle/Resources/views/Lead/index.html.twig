@@ -1,0 +1,14 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridId = 'contacts-grid' %}
+{% set pageTitle = 'Leads' %}
+
+{% block navButtons %}
+    {% if resource_granted('orocrm_sales_lead_create') %}
+        {{ UI.addButton({
+            'path' : path('orocrm_sales_lead_create'),
+            'title' : 'Create lead',
+            'label' : 'Create lead'
+        }) }}
+    {% endif %}
+{% endblock %}

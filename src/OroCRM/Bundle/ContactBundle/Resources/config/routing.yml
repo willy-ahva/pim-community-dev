@@ -1,0 +1,11 @@
+orocrm_contact_bundle:
+    resource:     "@OroCRMContactBundle/Controller"
+    type:         annotation
+    prefix:       /contact
+
+orocrm_contact_bundle_api:
+    resource: "@OroCRMContactBundle/Resources/config/routing_api.yml"
+    type: rest
+    prefix:       api/rest/{version}
+    defaults:
+        version:  latest

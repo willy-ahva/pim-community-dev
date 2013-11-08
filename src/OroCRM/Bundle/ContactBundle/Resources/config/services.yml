@@ -1,0 +1,183 @@
+parameters:
+    orocrm_contact.entity.class: OroCRM\Bundle\ContactBundle\Entity\Contact
+    orocrm_contact.type.contact.class: OroCRM\Bundle\ContactBundle\Form\Type\ContactType
+    orocrm_contact.type.group.class: OroCRM\Bundle\ContactBundle\Form\Type\GroupType
+    orocrm_contact.handler.contact.class: OroCRM\Bundle\ContactBundle\Form\Handler\ContactHandler
+    orocrm_contact.form.type.contact_select.class: OroCRM\Bundle\ContactBundle\Form\Type\ContactSelectType
+    orocrm_contact.handler.group.class: OroCRM\Bundle\ContactBundle\Form\Handler\GroupHandler
+
+    orocrm_contact.contact.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orocrm_contact.form.type.contact.api.class: OroCRM\Bundle\ContactBundle\Form\Type\ContactApiType
+
+    orocrm_contact.group.entity.class: OroCRM\Bundle\ContactBundle\Entity\Group
+    orocrm_contact.group.manager.api.class:  Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orocrm_contact.form.type.group.api.class: OroCRM\Bundle\ContactBundle\Form\Type\GroupApiType
+
+    orocrm_contact.contact_address.entity.class: OroCRM\Bundle\ContactBundle\Entity\ContactAddress
+    orocrm_contact.subscriber.contact_subscriber.class: OroCRM\Bundle\ContactBundle\EventListener\ContactSubscriber
+
+    orocrm_contact.email.owner.provider.class: OroCRM\Bundle\ContactBundle\Entity\Provider\EmailOwnerProvider
+
+    orocrm_contact.social_url_formatter.class: OroCRM\Bundle\ContactBundle\Formatter\SocialUrlFormatter
+
+services:
+    orocrm_contact.form.contact:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["orocrm_contact_form", "orocrm_contact", null]
+
+    orocrm_contact.form.group:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["orocrm_contact_group_form", "orocrm_contact_group"]
+
+    orocrm_contact.form.type.contact:
+        class: %orocrm_contact.type.contact.class%
+        arguments:
+            - %orocrm_contact.entity.class%
+            - %orocrm_contact.contact_address.entity.class%
+        tags:
+            - { name: form.type, alias: orocrm_contact }
+
+    orocrm_contact.form.handler.contact:
+        class: %orocrm_contact.handler.contact.class%
+        scope: request
+        arguments:
+            - @orocrm_contact.form.contact
+            - @request
+            - @doctrine.orm.entity_manager
+        tags:
+            - { name: oro_tag.tag_manager }
+
+    orocrm_contact.contact.manager:
+        class: %orocrm_contact.contact.manager.api.class%
+        arguments:
+            - %orocrm_contact.entity.class%
+            - @doctrine.orm.entity_manager
+
+    # Form type
+    orocrm_contact.form.type.contact_select:
+        class: %orocrm_contact.form.type.contact_select.class%
+        tags:
+            - { name: form.type, alias: orocrm_contact_select }
+
+    # Flexible attribute
+    orocrm_contact.form.handler.group:
+        class: %orocrm_contact.handler.group.class%
+        scope: request
+        arguments:
+            - @orocrm_contact.form.group
+            - @request
+            - @doctrine.orm.entity_manager
+
+    orocrm_contact.form.type.group:
+        class: %orocrm_contact.type.group.class%
+        tags:
+            - { name: form.type, alias: orocrm_contact_group }
+
+    # Contact API
+    orocrm_contact.contact.manager.api:
+        class: %orocrm_contact.contact.manager.api.class%
+        arguments:
+            - %orocrm_contact.entity.class%
+            - @doctrine.orm.entity_manager
+
+    orocrm_contact.contact_address.manager.api:
+        class: %oro_address.address.manager.api.class%
+        arguments:
+            - %orocrm_contact.contact_address.entity.class%
+            - @doctrine.orm.entity_manager
+
+    orocrm_contact.form.type.contact.api:
+        class: %orocrm_contact.form.type.contact.api.class%
+        arguments:
+            - %orocrm_contact.entity.class%
+            - %orocrm_contact.contact_address.entity.class%
+        tags:
+            - { name: form.type, alias: contact }
+
+    orocrm_contact.form.contact.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["contact", "contact", null]
+
+    orocrm_contact.form.handler.contact.api:
+        class: %orocrm_contact.handler.contact.class%
+        scope: request
+        arguments:
+            - @orocrm_contact.form.contact.api
+            - @request
+            - @doctrine.orm.entity_manager
+        tags:
+            - { name: oro_tag.tag_manager }
+
+    # Group API
+    orocrm_contact.group.manager.api:
+        class: %orocrm_contact.group.manager.api.class%
+        arguments:
+            - %orocrm_contact.group.entity.class%
+            - @doctrine.orm.entity_manager
+
+    orocrm_contact.form.type.group.api:
+        class: %orocrm_contact.form.type.group.api.class%
+        tags:
+            - { name: form.type, alias: contact_group }
+
+    orocrm_contact.form.group.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["contact_group", "contact_group", null]
+
+    orocrm_contact.form.handler.group.api:
+        class: %orocrm_contact.handler.group.class%
+        scope: request
+        arguments:
+            - @orocrm_contact.form.group.api
+            - @request
+            - @doctrine.orm.entity_manager
+
+    orocrm_contact.contact_address.form:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - "orocrm_contact_address_form"
+            - "oro_typed_address"
+            - ~
+
+    orocrm_contact.form.handler.contact_address:
+        class: %oro_address.form.handler.address.class%
+        scope: request
+        arguments:
+            - @orocrm_contact.contact_address.form
+            - @request
+            - @doctrine.orm.entity_manager
+
+    orocrm_contact.form.autocomplete.contact.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orocrm_contact.entity.class%
+            - ["first_name", "last_name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: contacts, acl_resource: orocrm_contact_view }
+
+    orocrm_contact.email.owner.provider:
+        class: %orocrm_contact.email.owner.provider.class%
+        tags:
+            - { name: oro_email.owner.provider, order: 2 }
+
+    orocrm_contact.subscriber.contact_subscriber:
+        class: %orocrm_contact.subscriber.contact_subscriber.class%
+        arguments:
+            - @service_container
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    orocrm_contact.social_url_formatter:
+        class: %orocrm_contact.social_url_formatter.class%
+        arguments:
+            - %oro_contact.social_url_format%
