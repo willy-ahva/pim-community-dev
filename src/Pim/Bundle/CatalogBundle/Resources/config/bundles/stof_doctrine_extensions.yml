@@ -3,5 +3,6 @@ stof_doctrine_extensions:
     translation_fallback: true
     orm:
         default:
+            translatable:     true
             timestampable:    true
             tree:             true

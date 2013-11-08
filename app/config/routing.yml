@@ -6,6 +6,20 @@ pim_catalog:
 pim_importexport:
     resource: "@PimImportExportBundle/Resources/config/routing.yml"
 
+# OROCRM routes
+orocrm_contact:
+    resource: "@OroCRMContactBundle/Resources/config/routing.yml"
+
+orocrm_account:
+    resource: "@OroCRMAccountBundle/Resources/config/routing.yml"
+
+orocrm_sales:
+    resource: "@OroCRMSalesBundle/Resources/config/routing.yml"
+    prefix:   /sales
+
+orocrm_report:
+    resource: "@OroCRMReportBundle/Resources/config/routing.yml"
+
 # Oro platform
 
 oro_default:

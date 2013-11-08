@@ -67,6 +67,17 @@ class AppKernel extends Kernel
 
         $bundles = array_merge($bundles, $pimBundles);
 
+        // CRM bundles
+        $crmBundles = array(
+            new OroCRM\Bundle\AccountBundle\OroCRMAccountBundle(),
+            new OroCRM\Bundle\ContactBundle\OroCRMContactBundle(),
+            new OroCRM\Bundle\DashboardBundle\OroCRMDashboardBundle(),
+            new OroCRM\Bundle\SalesBundle\OroCRMSalesBundle(),
+            new OroCRM\Bundle\ReportBundle\OroCRMReportBundle(),
+        );
+
+        $bundles = array_merge($bundles, $crmBundles);
+
         if (in_array($this->getEnvironment(), array('dev', 'test', 'behat'))) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
