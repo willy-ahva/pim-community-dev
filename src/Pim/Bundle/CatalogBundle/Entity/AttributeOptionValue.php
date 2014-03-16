@@ -2,8 +2,8 @@
 
 namespace Pim\Bundle\CatalogBundle\Entity;
 
-use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityAttributeOptionValue;
 use JMS\Serializer\Annotation\ExclusionPolicy;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttributeOptionValue;
 
 /**
  * Attribute option values
@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
  *
  * @ExclusionPolicy("all")
  */
-class AttributeOptionValue extends AbstractEntityAttributeOptionValue
+class AttributeOptionValue extends AbstractAttributeOptionValue
 {
     /**
      * Overrided to change target option name

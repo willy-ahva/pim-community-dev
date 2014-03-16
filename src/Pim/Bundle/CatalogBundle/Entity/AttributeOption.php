@@ -4,8 +4,9 @@ namespace Pim\Bundle\CatalogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\ExclusionPolicy;
-use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityAttributeOption;
 use Pim\Bundle\CatalogBundle\Model\ReferableInterface;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttributeOption;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttributeOptionValue;
 
 /**
  * Attribute options
@@ -16,7 +17,7 @@ use Pim\Bundle\CatalogBundle\Model\ReferableInterface;
  *
  * @ExclusionPolicy("all")
  */
-class AttributeOption extends AbstractEntityAttributeOption implements ReferableInterface
+class AttributeOption extends AbstractAttributeOption implements ReferableInterface
 {
     /**
      * @var string $code
@@ -88,6 +89,60 @@ class AttributeOption extends AbstractEntityAttributeOption implements Referable
     {
         return $this->default;
     }
+
+    /**
+     * Add option value
+     *
+     * @param AbstractAttributeOptionValue $value
+     *
+     * @return AbstractAttribute
+     */
+    public function addOptionValue(AbstractAttributeOptionValue $value)
+    {
+        $this->optionValues[] = $value;
+        $value->setOption($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove value
+     *
+     * @param AbstractAttributeOptionValue $value
+     *
+     * @return AbstractAttributeOption
+     */
+    public function removeOptionValue(AbstractAttributeOptionValue $value)
+    {
+        $this->optionValues->removeElement($value);
+
+        return $this;
+    }
+
+    /**
+     * Get localized value
+     *
+     * @return AbstractAttributeOptionValue
+     */
+    public function getOptionValue()
+    {
+        $translatable = $this->translatable;
+        $locale = $this->getLocale();
+        $values = $this->getOptionValues()->filter(
+            function ($value) use ($translatable, $locale) {
+                // return relevant translated value
+                if ($translatable and $value->getLocale() == $locale) {
+                    return true;
+                } elseif (!$translatable) {
+                    return true;
+                }
+            }
+        );
+        $value = $values->first();
+
+        return $value;
+    }
+
 
     /**
      * Override to use default value

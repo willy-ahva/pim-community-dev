@@ -3,14 +3,15 @@
 namespace Pim\Bundle\CatalogBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityFlexible;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttribute;
+use Pim\Bundle\FlexibleEntityBundle\Model\FlexibleValueInterface;
 use Pim\Bundle\CatalogBundle\Exception\MissingIdentifierException;
 use Pim\Bundle\CatalogBundle\Entity\Family;
 use Pim\Bundle\CatalogBundle\Entity\Group;
 use Pim\Bundle\CatalogBundle\Entity\AttributeGroup;
 use Pim\Bundle\CatalogBundle\Entity\AssociationType;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractFlexible;
 
 /**
  * Flexible product
@@ -21,7 +22,7 @@ use Pim\Bundle\CatalogBundle\Entity\AssociationType;
  *
  * @ExclusionPolicy("all")
  */
-class Product extends AbstractEntityFlexible implements ProductInterface, ReferableInterface
+class Product extends AbstractFlexible implements ProductInterface, ReferableInterface
 {
     /**
      * @var ArrayCollection $values
@@ -546,4 +547,212 @@ class Product extends AbstractEntityFlexible implements ProductInterface, Refera
     {
         $this->normalizedData = $normalizedData;
     }
+
+    /**
+     * Set value class
+     *
+     * @param string $valueClass
+     *
+     * @return AbstractEntityFlexible
+     */
+    public function setValueClass($valueClass)
+    {
+        $this->valueClass = $valueClass;
+
+        return $this;
+    }
+
+    /**
+     * Add value, override to deal with relation owner side
+     *
+     * @param FlexibleValueInterface $value
+     *
+     * @return AbstractEntityFlexible
+     */
+    public function addValue(FlexibleValueInterface $value)
+    {
+        $this->values[] = $value;
+        $this->indexedValues[$value->getAttribute()->getCode()][] = $value;
+        $value->setEntity($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove value
+     *
+     * @param FlexibleValueInterface $value
+     *
+     * @return AbstractEntityFlexible
+     */
+    public function removeValue(FlexibleValueInterface $value)
+    {
+        $this->removeIndexedValue($value);
+        $this->values->removeElement($value);
+
+        return $this;
+    }
+
+    /**
+     * Remove a value from the indexedValues array
+     *
+     * @param FlexibleValueInterface $value
+     *
+     * @return AbstractEntityFlexible
+     */
+    protected function removeIndexedValue(FlexibleValueInterface $value)
+    {
+        $attributeCode = $value->getAttribute()->getCode();
+        $possibleValues =& $this->indexedValues[$attributeCode];
+
+        if (is_array($possibleValues)) {
+            foreach ($possibleValues as $key => $possibleValue) {
+                if ($value === $possibleValue) {
+                    unset($possibleValues[$key]);
+                    break;
+                }
+            }
+        } else {
+            unset($this->indexedValues[$attributeCode]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the list of used attribute code from the indexed values
+     *
+     * @return array
+     */
+    public function getUsedAttributeCodes()
+    {
+        return array_keys($this->getIndexedValues());
+    }
+
+    /**
+     * Build the values indexed by attribute code array
+     *
+     * @return array indexedValues
+     */
+    protected function getIndexedValues()
+    {
+        $this->indexValuesIfNeeded();
+
+        return $this->indexedValues;
+    }
+
+    /**
+     * Mark the indexed as outdated
+     *
+     * @return AbstractEntityFlexible
+     */
+    public function markIndexedValuesOutdated()
+    {
+        $this->indexedValuesOutdated = true;
+
+        return $this;
+    }
+
+    /**
+     * Build the indexed values if needed. First step
+     * is to make sure that the values are initialized
+     * (loaded from DB)
+     *
+     * @return AbstractEntityFlexible
+     */
+    protected function indexValuesIfNeeded()
+    {
+        if ($this->indexedValuesOutdated) {
+            $this->indexedValues = array();
+            foreach ($this->values as $value) {
+                $this->indexedValues[$value->getAttribute()->getCode()][] = $value;
+            }
+            $this->indexedValuesOutdated = false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get value related to attribute code
+     *
+     * @param string $attributeCode
+     * @param string $localeCode
+     * @param string $scopeCode
+     *
+     * @return FlexibleValueInterface
+     */
+    public function getValue($attributeCode, $localeCode = null, $scopeCode = null)
+    {
+        $indexedValues = $this->getIndexedValues();
+
+        if (!isset($indexedValues[$attributeCode])) {
+            return null;
+        }
+
+        $value = null;
+        $possibleValues = $indexedValues[$attributeCode];
+
+        if (is_array($possibleValues) && count($possibleValues>0)) {
+
+            foreach ($possibleValues as $possibleValue) {
+                $valueLocale = null;
+                $valueScope = null;
+
+                if (null !== $possibleValue->getLocale()) {
+                    $valueLocale = ($localeCode) ? $localeCode : $this->getLocale();
+                }
+                if (null !== $possibleValue->getScope()) {
+                    $valueScope = ($scopeCode) ? $scopeCode : $this->getScope();
+                }
+                if ($possibleValue->getLocale() === $valueLocale && $possibleValue->getScope() === $valueScope) {
+                    $value = $possibleValue;
+                    break;
+                }
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get whether or not an attribute is part of a product
+     *
+     * @param AbstractEntityAttribute $attribute
+     *
+     * @return boolean
+     */
+    public function hasAttribute(AbstractAttribute $attribute)
+    {
+        $indexedValues = $this->getIndexedValues();
+
+        return isset($indexedValues[$attribute->getCode()]);
+    }
+
+    /**
+     * Check if a field or attribute exists
+     *
+     * @param string $attributeCode
+     *
+     * @return boolean
+     */
+    public function __isset($attributeCode)
+    {
+        $indexedValues = $this->getIndexedValues();
+
+        return isset($indexedValues[$attributeCode]);
+    }
+
+    /**
+     * Get value data by attribute code
+     *
+     * @param string $attCode
+     *
+     * @return mixed
+     */
+    public function __get($attCode)
+    {
+        return $this->getValue($attCode);
+    }
+
 }

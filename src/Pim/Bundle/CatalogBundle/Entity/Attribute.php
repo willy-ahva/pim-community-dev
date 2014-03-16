@@ -6,11 +6,11 @@ use Symfony\Component\Validator\GroupSequenceProviderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use Doctrine\Common\Collections\ArrayCollection;
-use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityAttribute;
 use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttribute;
 use Pim\Bundle\TranslationBundle\Entity\TranslatableInterface;
 use Pim\Bundle\TranslationBundle\Entity\AbstractTranslation;
 use Pim\Bundle\CatalogBundle\Model\ReferableInterface;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttributeOption;
 
 /**
  * Custom properties for an attribute
@@ -23,7 +23,7 @@ use Pim\Bundle\CatalogBundle\Model\ReferableInterface;
  *
  * @ExclusionPolicy("all")
  */
-class Attribute extends AbstractEntityAttribute implements
+class Attribute extends AbstractAttribute implements
     TranslatableInterface,
     GroupSequenceProviderInterface,
     ReferableInterface
@@ -152,6 +152,21 @@ class Attribute extends AbstractEntityAttribute implements
         $this->translations        = new ArrayCollection();
         $this->validationRule      = null;
         $this->properties          = array();
+    }
+
+    /**
+     * Add option (we do set attribute to deal with natural doctrine owner side and cascade)
+     *
+     * @param AbstractAttributeOption $option
+     *
+     * @return AbstractAttribute
+     */
+    public function addOption(AbstractAttributeOption $option)
+    {
+        $this->options[] = $option;
+        $option->setAttribute($this);
+
+        return $this;
     }
 
     /**

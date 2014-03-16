@@ -4,8 +4,8 @@ namespace Pim\Bundle\CatalogBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\ExclusionPolicy;
-use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityFlexibleValue;
-use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityAttributeOption;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractFlexibleValue;
+use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttributeOption;
 
 /**
  * Value for an attribute
@@ -16,7 +16,7 @@ use Pim\Bundle\FlexibleEntityBundle\Entity\Mapping\AbstractEntityAttributeOption
  *
  * @ExclusionPolicy("all")
  */
-class ProductValue extends AbstractEntityFlexibleValue implements ProductValueInterface
+class ProductValue extends AbstractFlexibleValue implements ProductValueInterface
 {
     /**
      * @var ProductInterface $entity
@@ -113,11 +113,11 @@ class ProductValue extends AbstractEntityFlexibleValue implements ProductValueIn
     /**
      * Remove an option
      *
-     * @param AbstractEntityAttributeOption $option
+     * @param AbstractAttributeOption $option
      *
      * @return ProductValue
      */
-    public function removeOption(AbstractEntityAttributeOption $option)
+    public function removeOption(AbstractAttributeOption $option)
     {
         $this->options->removeElement($option);
 
@@ -299,5 +299,33 @@ class ProductValue extends AbstractEntityFlexibleValue implements ProductValueIn
         }
 
         return $this->entity->isAttributeRemovable($this->attribute);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        $data = $this->getData();
+
+        if ($data instanceof \DateTime) {
+            $data = $data->format(\DateTime::ISO8601);
+        }
+
+        if ($data instanceof \Doctrine\Common\Collections\Collection) {
+            $items = array();
+            foreach ($data as $item) {
+                $value = (string) $item;
+                if (!empty($value)) {
+                    $items[] = $value;
+                }
+            }
+
+            return implode(', ', $items);
+        } elseif (is_object($data)) {
+            return (string) $data;
+        }
+
+        return (string) $data;
     }
 }
