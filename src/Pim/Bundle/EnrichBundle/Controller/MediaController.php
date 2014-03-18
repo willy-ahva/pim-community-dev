@@ -2,20 +2,21 @@
 
 namespace Pim\Bundle\EnrichBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContextInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Validator\ValidatorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Pim\Bundle\EnrichBundle\AbstractController\AbstractDoctrineController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Liip\ImagineBundle\Imagine\Filter\FilterManager;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Imagine\Image\ImagineInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Liip\ImagineBundle\Imagine\Filter\FilterManager;
+use Pim\Bundle\EnrichBundle\AbstractController\AbstractDoctrineController;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
  * Media controller
@@ -35,6 +36,9 @@ class MediaController extends AbstractDoctrineController
     /** @var \Liip\ImagineBundle\Imagine\Cache\CacheManager */
     protected $cacheManager;
 
+    /** @var ObjectRepository */
+    protected $mediaRepository;
+
     /**
      * Constructor
      *
@@ -49,6 +53,7 @@ class MediaController extends AbstractDoctrineController
      * @param ImagineInterface         $imagine
      * @param FilterManager            $filterManager
      * @param CacheManager             $cacheManager
+     * @param ObjectRepository         $mediaRepository
      */
     public function __construct(
         Request $request,
@@ -61,7 +66,8 @@ class MediaController extends AbstractDoctrineController
         RegistryInterface $doctrine,
         ImagineInterface $imagine,
         FilterManager $filterManager,
-        CacheManager $cacheManager
+        CacheManager $cacheManager,
+        ObjectRepository $mediaRepository
     ) {
         parent::__construct(
             $request,
@@ -74,9 +80,10 @@ class MediaController extends AbstractDoctrineController
             $doctrine
         );
 
-        $this->imagine       = $imagine;
-        $this->filterManager = $filterManager;
-        $this->cacheManager  = $cacheManager;
+        $this->imagine         = $imagine;
+        $this->filterManager   = $filterManager;
+        $this->cacheManager    = $cacheManager;
+        $this->mediaRepository = $mediaRepository;
     }
 
     /**
@@ -87,11 +94,7 @@ class MediaController extends AbstractDoctrineController
      */
     public function showAction(Request $request, $filename)
     {
-        $media = $this->getRepository('Pim\Bundle\CatalogBundle\Model\Media')->findOneBy(
-            array(
-                'filename' => $filename
-            )
-        );
+        $media = $this->mediaRepository->findOneBy(['filename' => $filename]);
 
         if (!$media) {
             throw $this->createNotFoundException(sprintf('Media "%s" not found', $filename));

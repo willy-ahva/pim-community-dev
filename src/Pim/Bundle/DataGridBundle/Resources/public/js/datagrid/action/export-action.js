@@ -12,11 +12,11 @@ define(
          */
         var ExportAction = Backbone.View.extend({
 
-            label: __('Quick Export'),
+            label: __('pim.grid.mass_action.quick_export'),
+
+            untranslatedLabel: 'pim.grid.mass_action.quick_export',
 
             icon: 'download',
-
-            target: 'div.grid-toolbar>.pull-left',
 
             originalButtonSelector: 'div.grid-toolbar .mass-actions-panel .action.btn',
 
@@ -25,18 +25,16 @@ define(
             originalButton: null,
 
             template: _.template(
-                '<div class="export-actions-panel btn-group buffer-left">' +
-                    '<div class="btn-group">' +
-                        '<a href="javascript:void(0);" class="action btn no-hash" title="<%= label %>">' +
-                            '<i class="icon-<%= icon %>"></i>' +
-                            '<%= label %>' +
-                        '</a>' +
-                    '</div>' +
-                '</div>'
+                '<li>' +
+                    '<a href="javascript:void(0);" class="no-hash" title="<%= label %>">' +
+                        '<%= label %>' +
+                    '</a>' +
+                '</li>'
             ),
 
             initialize: function (options) {
                 if (_.has(options, 'label')) {
+                    this.untranslatedLabel = options.label;
                     this.label = __(options.label);
                 }
                 if (_.has(options, 'icon')) {
@@ -60,16 +58,21 @@ define(
 
             render: function () {
                 this.$gridContainer
-                    .find(this.target)
+                    .find('div.export-actions-panel')
+                    .find('ul.dropdown-menu')
                     .append(
                         this.template({
                             icon: this.icon,
                             label: this.label
                         })
                     )
-                    .on('click', '.export-actions-panel a.btn.action', _.bind(this.execute, this));
+                    .on('click', 'li a:contains("'+ this.label +'")', _.bind(this.execute, this));
 
-                this.originalButton = this.$gridContainer.find(this.originalButtonSelector).find('.icon-' + this.originalButtonIcon).parent();
+                this.originalButton = this.$gridContainer
+                    .find(this.originalButtonSelector)
+                    .find('.icon-' + this.originalButtonIcon +':contains("'+ this.untranslatedLabel +'")')
+                    .parent();
+
                 this.originalButton.hide();
             },
 
@@ -78,15 +81,36 @@ define(
             }
         });
 
+        /** init method which create export buttons */
         ExportAction.init = function ($gridContainer, gridName) {
             var metadata = $gridContainer.data('metadata');
-            var action   = metadata.massActions.quick_export;
+            var actions  = metadata.massActions;
+            ExportAction.createPanel($gridContainer);
 
-            if (action.type == 'export') {
-                new ExportAction(
-                    _.extend({ $gridContainer: $gridContainer, gridName: gridName }, action)
-                );
+            for (var key in actions) {
+                var action = actions[key];
+                if (action.type == 'export') {
+                    new ExportAction(
+                        _.extend({ $gridContainer: $gridContainer, gridName: gridName }, action)
+                    );
+                }
             }
+        };
+
+        /** Create the dropdown panel which contains export buttons */
+        ExportAction.createPanel = function ($gridContainer) {
+            $gridContainer
+                .find('div.grid-toolbar>.pull-left')
+                .append(
+                    '<div class="export-actions-panel btn-group buffer-left">' +
+                        '<button href="javascript:void(0);" class="action btn dropdown-toggle" title="Export" data-toggle="dropdown">' +
+                            '<i class="icon-download-alt"></i>' +
+                            __('pim.grid.mass_action.quick_export') +
+                            '<i class="caret"></i>' +
+                        '</button>' +
+                        '<ul class="dropdown-menu"></ul>' +
+                    '</div>'
+                );
         };
 
         return ExportAction;

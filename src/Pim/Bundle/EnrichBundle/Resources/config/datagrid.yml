@@ -260,9 +260,7 @@ datagrid:
                 frontend_type: date
             groups:
                 label:         Groups
-                type:          flexible_twig
-                template:      PimDataGridBundle:Property:pim_catalog_groups.html.twig
-                frontend_type: html
+                type:          product_groups
                 selector:      product_groups
         properties:
             id: ~
@@ -312,19 +310,18 @@ datagrid:
                 launcherOptions:
                     icon: trash
 
-            quick_export:
+            quick_export_csv:
                 type: export
-                label: Quick Export
+                label: pim.grid.mass_action.quick_export.csv_all
                 icon: download
                 data_identifier: p
-                route: pim_datagrid_export_flexible_index
+                route: pim_datagrid_export_product_index
                 route_parameters:
                     _format: csv
                     _contentType: text/csv
                 context:
                     withHeader: true
                     heterogeneous: true
-                handler: pim_datagrid.extension.mass_action.handler.export
                 messages:
                     empty_selection: No products selected
 

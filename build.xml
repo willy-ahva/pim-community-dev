@@ -10,6 +10,8 @@
 
     <target name="build-behat" depends="prepare,composer,vendors,install-all-behat,behat"/>
 
+    <target name="build-behat-mongo" depends="prepare,composer,require-mongo,activate-mongo,vendors,install-all-behat,behat"/>
+
     <target name="build-behat-10-dev" depends="prepare,composer,vendors,install-all-behat,behat-10-dev"/>
 
     <target name="build-behat-pr" depends="prepare,composer,vendors,install-all-behat,behat-pr"/>
@@ -18,7 +20,7 @@
 
     <target name="build-docs-behat" depends="prepare,composer,vendors,link-pim-docs,install-all-behat,behat-docs"/>
 
-    <target name="build-code-quality" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc"/>
+    <target name="build-code-quality" depends="prepare,check-interfaces,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc"/>
 
     <target name="clean" description="Cleanup build artifacts">
         <delete dir="${basedir}/app/build/api"/>
@@ -70,6 +72,15 @@
                 <modified />
             </fileset>
         </apply>
+    </target>
+
+    <target name="check-interfaces" description="Check if the interfaces are being used">
+        <exec executable="${basedir}/app/Resources/jenkins/interface_check.sh" failonerror="true">
+            <arg value="${basedir}/src" />
+        </exec>
+        <exec executable="${basedir}/app/Resources/jenkins/interface_check.sh" failonerror="false">
+            <arg value="${basedir}/spec" />
+        </exec>
     </target>
 
     <target name="phploc" description="Measure project size using PHPLOC">
@@ -284,6 +295,16 @@
         </exec>
     </target>
 
+    <target name="require-mongo" description="Require the mongo bundle">
+        <exec executable="${basedir}/composer.phar" failonerror="true">
+            <arg value="require" />
+            <arg value="--no-update" />
+            <arg value="doctrine/mongodb-odm-bundle" />
+            <arg value="3.0.*@dev" />
+        </exec>
+    </target>
+
+
     <target name="vendors" description="Install vendors">
         <exec executable="${basedir}/composer.phar" failonerror="true">
             <arg value="install" />
@@ -291,6 +312,15 @@
             <arg value="--prefer-dist" />
             <arg value="--optimize-autoloader" />
         </exec>
+    </target>
+
+    <target name="activate-mongo" description="Activate the mongo bundle">
+        <replace
+            file="${basedir}/app/AppKernel.php"
+            token="// new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle()"
+            value="new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle()"
+            failOnNoReplacements="true"
+        />
     </target>
 
     <target name="setupdb" description="Setup db">

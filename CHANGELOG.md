@@ -9,6 +9,8 @@
 - Introduced custom ODM types to map document to one or many entities
 - Define specific route and configuration for datagrid quick exports
 - MongoDB support (WIP)
+- Allow to add many quick export on datagrids
+- Add a parameter to ProductManager::save() and ProductManager::saveAll() to allow saving products without completeness recalculation
 
 ## Bug fixes
 - Fixed verbose option always used
@@ -39,10 +41,20 @@
 - Replace FlexibleManager by ProductManager in ContextConfigurator constructor arguments
 - Replace tag `pim_flexibleentity.attributetype` by `pim_catalog.attribute_type`
 - Replace service `@pim_flexibleentity.validator.attribute_constraint_guesser` by `@pim_catalog.validator.attribute_constraint_guesser`
+- Replace the use of FlexibleValueInterface by ProductValueInterface in AttributeTypeInterface and AbstractAttributeType
+- Update ProductValueInterface, add getData, setData and getAttribute methods
+- Move `DataGridBundle/Extension/Formatter/Property/*` to `DataGridBundle\Extension\Formatter\Property\ProductValue\*`
+- Move mass export in specific controller
+- Add an affectsCompleteness method to MassEditActionInterface to indicate whether performing the mass action requires recalculating the product completeness
+
+# 1.0.2
+## Bug Fixes
+- Removed hardcoded attribute table from ORM/CompletenessGenerator.php
 
 # 1.0.1
 ## Bug Fixes
 - Removed hardcoded Attribute from ChainedAttributeConstraintGuesser
+- Removed hardcoded Attribute from ValidMetricValidator
 
 # 1.0.0 - "Hare We Go" (2014-03-06)
 

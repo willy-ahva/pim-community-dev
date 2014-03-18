@@ -9,6 +9,7 @@ use Pim\Bundle\FlexibleEntityBundle\Model\AbstractAttribute;
 use Pim\Bundle\CatalogBundle\Manager\ChannelManager;
 use Pim\Bundle\CatalogBundle\Manager\LocaleManager;
 use Pim\Bundle\CatalogBundle\Manager\CurrencyManager;
+use Pim\Bundle\CatalogBundle\Model\ProductPrice;
 
 /**
  * Product builder
@@ -144,6 +145,17 @@ class ProductBuilder
     }
 
     /**
+     * Add a product price with currency to the value
+     *
+     * @param ProductValueInterface $value
+     * @param string                $currency
+     */
+    public function addPriceForCurrency(ProductValueInterface $value, $currency)
+    {
+        $value->addPrice(new ProductPrice(null, $currency));
+    }
+
+    /**
      * Get expected attributes for the product
      *
      * @param ProductInterface $product
@@ -250,15 +262,12 @@ class ProductBuilder
         $values = array();
         foreach ($attributes as $attribute) {
             $requiredValues = array();
-            if ($attribute->isScopable() and $attribute->isLocalizable()) {
+            if ($attribute->isScopable() && $attribute->isLocalizable()) {
                 $requiredValues = $this->getScopeToLocaleRows($attribute);
-
             } elseif ($attribute->isScopable()) {
                 $requiredValues = $this->getScopeRows($attribute);
-
             } elseif ($attribute->isLocalizable()) {
                 $requiredValues = $this->getLocaleRows($attribute);
-
             } else {
                 $requiredValues[] = array('attribute' => $attribute->getCode(), 'locale' => null, 'scope' => null);
             }
@@ -303,11 +312,31 @@ class ProductBuilder
      */
     protected function addMissingPrices(ProductInterface $product)
     {
+        $activeCurrencies = $this->currencyManager->getActiveCodes();
+
         foreach ($product->getValues() as $value) {
             if ($value->getAttribute()->getAttributeType() === 'pim_catalog_price_collection') {
-                $activeCurrencies = $this->currencyManager->getActiveCodes();
-                $value->addMissingPrices($activeCurrencies);
-                $value->removeDisabledPrices($activeCurrencies);
+                $prices = $value->getPrices();
+
+                foreach ($activeCurrencies as $activeCurrency) {
+                    $hasPrice = $prices->filter(
+                        function ($price) use ($activeCurrency) {
+                            return $activeCurrency === $price->getCurrency();
+                        }
+                    )->count() > 0;
+
+                    if (!$hasPrice) {
+                        $this->addPriceForCurrency($value, $activeCurrency);
+                    }
+                }
+
+                $prices->forAll(
+                    function ($key, $price) use ($activeCurrencies, $value) {
+                        if (!in_array($price->getCurrency(), $activeCurrencies)) {
+                            $value->removePrice($price);
+                        }
+                    }
+                );
             }
         }
     }
