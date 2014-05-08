@@ -9,6 +9,7 @@ use Pim\Bundle\CatalogBundle\Doctrine\CompletenessGeneratorInterface;
 use Pim\Bundle\CatalogBundle\Entity\AttributeRequirement;
 use Pim\Bundle\CatalogBundle\Entity\Channel;
 use Pim\Bundle\CatalogBundle\Entity\Family;
+use Pim\Bundle\CatalogBundle\Entity\Repository\ChannelRepository;
 use Pim\Bundle\CatalogBundle\Entity\Repository\FamilyRepository;
 use Pim\Bundle\CatalogBundle\Model\ProductInterface;
 use Pim\Bundle\CatalogBundle\Validator\Constraints\ProductValueComplete;
@@ -26,6 +27,11 @@ class CompletenessManager
      * @var FamilyRepository
      */
     protected $familyRepository;
+
+    /**
+     * @var ChannelRepository
+     */
+    protected $channelRepository;
 
     /**
      * @var CompletenessGeneratorInterface
@@ -46,20 +52,23 @@ class CompletenessManager
      * Constructor
      *
      * @param FamilyRepository                $familyRepository
+     * @param ChannelRepository               $channelRepository
      * @param CompletenessGeneratorInterface  $generator
      * @param ValidatorInterface              $validator
      * @param string                          $class
      */
     public function __construct(
         FamilyRepository $familyRepository,
+        ChannelRepository $channelRepository,
         CompletenessGeneratorInterface $generator,
         ValidatorInterface $validator,
         $class
     ) {
-        $this->familyRepository = $familyRepository;
-        $this->generator        = $generator;
-        $this->validator        = $validator;
-        $this->class            = $class;
+        $this->familyRepository  = $familyRepository;
+        $this->channelRepository = $channelRepository;
+        $this->generator         = $generator;
+        $this->validator         = $validator;
+        $this->class             = $class;
     }
 
     /**
@@ -112,6 +121,30 @@ class CompletenessManager
     {
         if ($family->getId()) {
             $this->generator->scheduleForFamily($family);
+        }
+    }
+
+    /**
+     * Schedule recalculation of completenesses for all products
+     * of a channel
+     *
+     * @param Channel $channel
+     */
+    public function scheduleForChannel(Channel $channel)
+    {
+        if ($channel->getId()) {
+            $formerLocales = $this->channelRepository->getLocaleIdsForChannel($channel);
+            $currentLocales = array_map(
+                function ($locale) {
+                    return $locale->getId();
+                },
+                $channel->getLocales()->toArray()
+            );
+
+            $deletedLocales = array_diff($formerLocales, $currentLocales);
+            foreach ($deletedLocales as $deletedLocale) {
+                $this->generator->scheduleForChannelAndLocale($channel, $deletedLocale);
+            }
         }
     }
 

@@ -14,8 +14,9 @@
 - Introduce a ProductValueFormFactory which dispatch a EnrichEvents::CREATE_PRODUCT_VALUE_FORM to ease the product value form customization
 
 ## Bug fixes
-- replace usage of Symfony process to launch background job with a simple exec, more reliable on a heavily loaded environment
-- add missing translation keys for "manage filters", "all", "records", etc
+- Replace usage of Symfony process to launch background job with a simple exec, more reliable on a heavily loaded environment
+- Add missing translation keys for "manage filters", "all", "records", etc
+- Deleting completeness when a locale of a channel is deleted
 
 ## BC breaks
 - Remove FlexibleEntityBundle
@@ -31,8 +32,11 @@
 - Remove AbstractAttributeType::buildValueFormType, change visibility of prepareValueFormName, prepareValueFormAlias, prepareValueFormOptions, prepareValueFormConstraints, prepareValueFormData to public
 - Remove `MetricBaseValuesSubscriber` and create one for MongoDB and another one for ORM
 - Create `OptionFilter`, `OptionsFilter` for ORM and MongoDB implementations
-- Remove the Doctrine registry dependency from Pim\Bundle\CatalogBundle\Manager\CompletenessManager and use only the family repository
-- Remove the Doctrine registry dependency from Pim\Bundle\CatalogBundle\Doctrine\ORM\CompletenessGenerator and use only the entity manager
+- Remove the Doctrine registry dependency from `Pim\Bundle\CatalogBundle\Manager\CompletenessManager` and use only the family repository
+- Remove the Doctrine registry dependency from `Pim\Bundle\CatalogBundle\Doctrine\ORM\CompletenessGenerator` and use only the entity manager
+- Add a new method `scheduleForChannelAndLocale` to `Pim\Bundle\CatalogBundle\Doctrine\CompletenessGeneratorInterface`
+- Add a dependency to the completeness manager on `Pim\Bundle\EnrichBundle\Form\Handler\ChannelHandler`
+- Add a dependency to the channel repository on `Pim\Bundle\CatalogBundle\Manager\CompletenessManager`
 
 # 1.1.0 - "Rabbit Punch" (2014-04-16)
 

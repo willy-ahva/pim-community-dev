@@ -49,4 +49,13 @@ interface CompletenessGeneratorInterface
      * @param Family $family
      */
     public function scheduleForFamily(Family $family);
+
+    /**
+     * Schedule recalculation of completenesses for all products
+     * of a channel and a locale id
+     *
+     * @param Channel $channel
+     * @param int     $localeId
+     */
+    public function scheduleForChannelAndLocale(Channel $channel, $localeId);
 }

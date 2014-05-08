@@ -2,7 +2,9 @@
 
 namespace Pim\Bundle\CatalogBundle\Entity\Repository;
 
+use Doctrine\ORM\Query;
 use Pim\Bundle\CatalogBundle\Doctrine\ReferableEntityRepository;
+use Pim\Bundle\CatalogBundle\Entity\Channel;
 
 /**
  * Channel repository
@@ -68,5 +70,36 @@ class ChannelRepository extends ReferableEntityRepository
         $qb->groupBy($rootAlias);
 
         return $qb;
+    }
+
+    /**
+     * Get the locale ids used by a channel
+     *
+     * @param Channel $channel
+     *
+     * @return array containing the list of locale ids
+     */
+    public function getLocaleIdsForChannel(Channel $channel)
+    {
+        $sql = <<<SQL
+    SELECT cl.locale_id
+    FROM pim_catalog_channel_locale cl
+    WHERE cl.channel_id = :channel_id
+SQL;
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->bindValue(':channel_id', $channel->getId());
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll();
+
+        $locales = array_map(
+            function ($row) {
+                return (int) $row['locale_id'];
+            },
+            $rows
+        );
+
+        return $locales;
     }
 }

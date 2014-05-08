@@ -639,4 +639,24 @@ MAIN_SQL;
 
         $stmt->execute();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function scheduleForChannelAndLocale(Channel $channel, $localeId)
+    {
+        $sql = <<<SQL
+            DELETE c FROM pim_catalog_completeness c
+            WHERE c.channel_id = :channel_id
+            AND c.locale_id = :locale_id
+SQL;
+
+        $sql = $this->applyTableNames($sql);
+
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue('channel_id', $channel->getId());
+        $stmt->bindValue('locale_id', $localeId);
+
+        $stmt->execute();
+    }
 }
