@@ -31,7 +31,8 @@
 - Remove AbstractAttributeType::buildValueFormType, change visibility of prepareValueFormName, prepareValueFormAlias, prepareValueFormOptions, prepareValueFormConstraints, prepareValueFormData to public
 - Remove `MetricBaseValuesSubscriber` and create one for MongoDB and another one for ORM
 - Create `OptionFilter`, `OptionsFilter` for ORM and MongoDB implementations
-- Remove Doctrine registry dependency from Pim\Bundle\CatalogBundle\Manager\CompletenessManager and use only the family repository
+- Remove the Doctrine registry dependency from Pim\Bundle\CatalogBundle\Manager\CompletenessManager and use only the family repository
+- Remove the Doctrine registry dependency from Pim\Bundle\CatalogBundle\Doctrine\ORM\CompletenessGenerator and use only the entity manager
 
 # 1.1.0 - "Rabbit Punch" (2014-04-16)
 
