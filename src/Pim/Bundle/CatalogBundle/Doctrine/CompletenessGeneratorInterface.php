@@ -55,7 +55,7 @@ interface CompletenessGeneratorInterface
      * of a channel and a locale id
      *
      * @param Channel $channel
-     * @param int     $localeId
+     * @param integer $localeId
      */
     public function scheduleForChannelAndLocale(Channel $channel, $localeId);
 }

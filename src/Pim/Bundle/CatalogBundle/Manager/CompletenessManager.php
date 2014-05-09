@@ -51,11 +51,11 @@ class CompletenessManager
     /**
      * Constructor
      *
-     * @param FamilyRepository                $familyRepository
-     * @param ChannelRepository               $channelRepository
-     * @param CompletenessGeneratorInterface  $generator
-     * @param ValidatorInterface              $validator
-     * @param string                          $class
+     * @param FamilyRepository               $familyRepository
+     * @param ChannelRepository              $channelRepository
+     * @param CompletenessGeneratorInterface $generator
+     * @param ValidatorInterface             $validator
+     * @param string                         $class
      */
     public function __construct(
         FamilyRepository $familyRepository,

@@ -39,10 +39,10 @@ class ChannelHandler
 
     /**
      * Constructor for handler
-     * @param FormInterface         $form    Form called
-     * @param Request               $request Web request
-     * @param ObjectManager         $manager Storage manager
-     * @param CompletenessManager   $completenessManager Completeness manager
+     * @param FormInterface       $form                Form called
+     * @param Request             $request             Web request
+     * @param ObjectManager       $manager             Storage manager
+     * @param CompletenessManager $completenessManager Completeness manager
      */
     public function __construct(FormInterface $form, Request $request, ObjectManager $manager, CompletenessManager $completenessManager)
     {
