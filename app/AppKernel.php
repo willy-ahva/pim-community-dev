@@ -82,6 +82,9 @@ class AppKernel extends OroKernel
         );
 
         $bundles = array_merge($bundles, $pimBundles);
+        $bundles[] = new Pim\Bundle\MagentoConnectorBundle\PimMagentoConnectorBundle();
+        $bundles[] = new Pim\Bundle\DeltaExportBundle\PimDeltaExportBundle();
+        $bundles[] = new Pim\Bundle\ConnectorMappingBundle\PimConnectorMappingBundle();
 
         return $bundles;
     }
