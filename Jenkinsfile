@@ -12,7 +12,7 @@ def launchBehatTests = "yes"
 
 stage("Checkout") {
     milestone 1
-    if (env.BRANCH_NAME =~ /^PR-/) {
+    //if (env.BRANCH_NAME =~ /^PR-/) {
         userInput = input(message: 'Launch tests?', parameters: [
             choice(choices: 'yes\nno', description: 'Run unit tests and code style checks', name: 'launchUnitTests'),
             choice(choices: 'yes\nno', description: 'Run integration tests', name: 'launchIntegrationTests'),
@@ -34,7 +34,7 @@ stage("Checkout") {
         launchUnitTests = userInput['launchUnitTests']
         launchIntegrationTests = userInput['launchIntegrationTests']
         launchBehatTests = userInput['launchBehatTests']
-    }
+    //}
     milestone 2
 
     node {
