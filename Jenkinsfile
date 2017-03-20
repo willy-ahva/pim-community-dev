@@ -263,6 +263,7 @@ def runBehatTest(edition, storage, features, phpVersion, mysqlVersion, esVersion
         dir("behat-${edition}-${storage}") {
             sh "echo '[DEBUGW] after docker deleteDir()'"
             sh "ls -l"
+            sh "pwd"
             deleteDir()
             if ('ce' == edition) {
                unstash "pim_community_dev_full"
