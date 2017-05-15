@@ -168,6 +168,10 @@ if (launchBehatTests.equals("yes")) {
                     node('docker') {
                         docker.image("carcel/php:5.6").inside() {
                             def tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
+                            def localEdition = editions[j]
+                            def localStorage = storages[k]
+                            def localPath = paths[i]
+
                             if ('ce' == editions[j]) {
                                 unstash "pim_community_dev_full"
                             } else {
@@ -180,25 +184,21 @@ if (launchBehatTests.equals("yes")) {
                                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
                             }
 
-                            //def localEdition = editions[j]
-                            sh "echo ${localEdition}"
-                            sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
+                            //sh "echo ${localEdition}"
+                            //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
                             tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
 
-                            sh "echo 'not splitted ${tags}'"
+                            //sh "echo 'not splitted ${tags}'"
 
                             tags = tags.split('\r?\n')
 
-                            sh "echo 'splitted ${tags}'"
+                            //sh "echo 'splitted ${tags}'"
 
                             for(int l = 0; l < tags.size(); l++) {
-                                def localEdition = editions[j]
-                                def localStorage = storages[k]
-                                def localPath = paths[i]
                                 def localTag = tags[l]
 
-                                sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
+                                //sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
                                 //sh "echo ${localStorage}"
                                 //sh "echo ${localPath}"
                                 //sh "echo ${localTag}"
