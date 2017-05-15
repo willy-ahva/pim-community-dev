@@ -265,6 +265,7 @@ def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVers
             }
         } finally {
             junit 'app/logs/*.xml'
+            sh "cat app/logs/rerun${batch}.log"
             archiveArtifacts allowEmptyArchive: true, artifacts: 'app/build/screenshots/*.png, app/logs/rerun*.log'
             cleanUpEnvironment()
         }
