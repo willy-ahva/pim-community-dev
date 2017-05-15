@@ -27,7 +27,7 @@ stage("Checkout") {
         //])
 
         storages = ["orm"]
-        editions = ["ce", "ee"]
+        editions = ["ee", "ce"]
         features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
         launchIntegrationTests = "no"
