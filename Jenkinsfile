@@ -187,24 +187,24 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo ${localEdition}"
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
-                            tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
+                            def batches = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
 
                             //sh "echo 'not splitted ${tags}'"
 
-                            tags = tags.split('\r?\n')
+                            batches = batches.split('\r?\n')
 
                             //sh "echo 'splitted ${tags}'"
 
                             for(int l = 0; l < tags.size(); l++) {
-                                def localTag = tags[l]
+                                def localBatch = batches[l]
 
                                 //sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
                                 //sh "echo ${localStorage}"
                                 //sh "echo ${localPath}"
                                 //sh "echo ${localTag}"
 
-                                tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
-                                    runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
+                                tasks["behat-${localEdition}-${localStorage}-${localPath}-${localBatch}"] = {
+                                    runBehatTest (localEdition, localStorage, localPath, localBatch, phpVersion, mysqlVersion, esVersion, retryNumber)
                                 }
                             }
                         }
