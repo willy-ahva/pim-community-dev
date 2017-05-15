@@ -190,7 +190,7 @@ if (launchBehatTests.equals("yes")) {
                             def batches = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
                             batches = batches.split('\r?\n')
 
-                            for(int l = 0; l < tags.size(); l++) {
+                            for(int l = 0; l < batches.size(); l++) {
                                 def localBatch = batches[l]
 
                                 tasks["behat-${localEdition}-${localStorage}-${localPath}-${localBatch}"] = {
