@@ -226,7 +226,7 @@ def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVers
         try {
             if ('ce' == edition) {
                 unstash "pim_community_dev_full"
-                tags = '~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app'
+                tags = '~skip&&~skip-pef&&~skip-nav&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app'
             } else {
                 unstash "pim_enterprise_dev_full"
                 dir('vendor/akeneo/pim-community-dev') {
@@ -234,8 +234,7 @@ def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVers
                     unstash "pim_community_dev"
                 }
                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
-                sh "ls bin/" // DEBUG
-                tags = '~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app&&~ce'
+                tags = '~skip&&~skip-pef&&~skip-nav&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app&&~ce'
             }
 
             // Configure the PIM
