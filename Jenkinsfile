@@ -27,7 +27,7 @@ stage("Checkout") {
         //])
 
         storages = ["orm"]
-        editions = ["ce", "ee"]
+        editions = ["ee", "ce"]
         features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
         launchIntegrationTests = "no"
@@ -183,25 +183,29 @@ if (launchBehatTests.equals("yes")) {
                             def localEdition = editions[j]
                             sh "echo ${localEdition}"
                             sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
+
                             tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
+
                             sh "echo 'not splitted ${tags}'"
+
                             tags = tags.split('\r?\n')
+
                             sh "echo 'splitted ${tags}'"
-                        }
 
-                        for(int l = 0; l < tags.size(); l++) {
-                            def localEdition = editions[j]
-                            def localStorage = storages[k]
-                            def localPath = paths[i]
-                            def localTag = tags[l]
+                            for(int l = 0; l < tags.size(); l++) {
+                                def localEdition = editions[j]
+                                def localStorage = storages[k]
+                                def localPath = paths[i]
+                                def localTag = tags[l]
 
-                            sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
-                            //sh "echo ${localStorage}"
-                            //sh "echo ${localPath}"
-                            //sh "echo ${localTag}"
+                                sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
+                                //sh "echo ${localStorage}"
+                                //sh "echo ${localPath}"
+                                //sh "echo ${localTag}"
 
-                            tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
-                                runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
+                                tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
+                                    runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
+                                }
                             }
                         }
                     }
@@ -216,7 +220,6 @@ if (launchBehatTests.equals("yes")) {
 def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVersion, retryNumber) {
     node('docker') {
         cleanUpEnvironment()
-        //sh "docker rm -f elasticsearch"
         sh "echo ${batch}"
 
         def workspace = "/home/docker/pim"
