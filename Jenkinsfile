@@ -167,7 +167,7 @@ if (launchBehatTests.equals("yes")) {
                 for(int k = 0; k < storages.size(); k++) {
                     node('docker') {
                         docker.image("carcel/php:5.6").inside() {
-                            tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
+                            def tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
                             if ('ce' == editions[j]) {
                                 unstash "pim_community_dev_full"
                             } else {
@@ -182,7 +182,9 @@ if (launchBehatTests.equals("yes")) {
 
                             sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
                             tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
+                            sh "echo 'not splitted ${tags}'"
                             tags = tags.split('\r?\n')
+                            sh "echo 'splitted ${tags}'"
                         }
 
                         for(int l = 0; l < tags.size(); l++) {
