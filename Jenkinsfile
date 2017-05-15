@@ -28,7 +28,7 @@ stage("Checkout") {
 
         storages = ["orm", "odm"]
         editions = ["ce", "ee"]
-        features = "features/channel, features/attribute-group" // vendor/akeneo/pim-community-dev/features/import/xlsx/
+        features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
         launchIntegrationTests = "no"
         launchBehatTests = "yes"
@@ -258,14 +258,14 @@ def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVers
             sh "docker exec akeneo-behat php app/console --env=test pim:install --force"
             sh "docker exec akeneo-behat bin/behat-list '${path}' '${tags}'"
 
-            sh "docker exec akeneo-behat bin/behat --format 'progress, Pim\\Behat\\Formatter\\JUnitFormatter' --out 'null,app/logs/' --rerun='app/logs/rerun${batch}.log' --config behat.ci.yml --strict -v --tags '@${batch}' ${path}"
+            sh "docker exec akeneo-behat bin/behat --format 'progress, Pim\\Behat\\Formatter\\JUnitFormatter' --out 'null,app/logs/' --rerun='app/logs/rerun-${batch}.log' --config behat.ci.yml --strict -v --tags '@${batch}' ${path}"
         } catch (error) {
             retry (retryNumber) {
-                sh "docker exec akeneo-behat bin/behat --format 'progress, Pim\\Behat\\Formatter\\JUnitFormatter' --rerun='app/logs/rerun${batch}.log' --out 'null,app/logs/' --config behat.ci.yml --strict -v --tags '@${batch}'"
+                sh "docker exec akeneo-behat bin/behat --format 'progress, Pim\\Behat\\Formatter\\JUnitFormatter' --rerun='app/logs/rerun-${batch}.log' --out 'null,app/logs/' --config behat.ci.yml --strict -v --tags '@${batch}'"
             }
         } finally {
             junit 'app/logs/*.xml'
-            sh "cat app/logs/rerun${batch}.log"
+            sh "cat app/logs/rerun-${batch}.log"
             archiveArtifacts allowEmptyArchive: true, artifacts: 'app/build/screenshots/*.png, app/logs/rerun*.log'
             cleanUpEnvironment()
         }
