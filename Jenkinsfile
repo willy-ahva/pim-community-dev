@@ -26,8 +26,8 @@ stage("Checkout") {
         //    choice(choices: '5\n1.7', description: 'ElasticSearch version to run behat with', name: 'esVersion')
         //])
 
-        storages = ["orm", "odm"]
-        editions = ["ce", "ee"]
+        storages = ["orm"]
+        editions = ["ee"]
         features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
         launchIntegrationTests = "no"
