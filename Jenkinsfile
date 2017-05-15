@@ -200,9 +200,9 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo ${localPath}"
                             //sh "echo ${localTag}"
 
-                            //tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
-                            //    runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
-                            //}
+                            tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
+                                runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
+                            }
                         }
                     }
                 }
