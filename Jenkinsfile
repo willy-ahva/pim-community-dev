@@ -27,7 +27,7 @@ stage("Checkout") {
         //])
 
         storages = ["orm"]
-        editions = ["ee"]
+        editions = ["ce", "ee"]
         features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
         launchIntegrationTests = "no"
@@ -180,6 +180,8 @@ if (launchBehatTests.equals("yes")) {
                                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
                             }
 
+                            def localEdition = editions[j]
+                            sh "echo ${localEdition}"
                             sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
                             tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
                             sh "echo 'not splitted ${tags}'"
