@@ -183,16 +183,21 @@ if (launchBehatTests.equals("yes")) {
                             tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
                             tags = tags.split('\r?\n')
                         }
-                    }
 
-                    for(int l = 0; l < tags.size(); l++) {
-                        def localEdition = editions[j]
-                        def localStorage = storages[k]
-                        def localPath = paths[i]
-                        def localTag = tags[l]
+                        for(int l = 0; l < tags.size(); l++) {
+                            def localEdition = editions[j]
+                            def localStorage = storages[k]
+                            def localPath = paths[i]
+                            def localTag = tags[l]
 
-                        tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
-                            runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
+                            sh "echo ${localEdition}"
+                            sh "echo ${localStorage}"
+                            sh "echo ${localPath}"
+                            sh "echo ${localPath}"
+
+                            //tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
+                            //    runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
+                            //}
                         }
                     }
                 }
