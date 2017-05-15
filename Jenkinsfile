@@ -180,7 +180,7 @@ if (launchBehatTests.equals("yes")) {
                                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
                             }
 
-                            def localEdition = editions[j]
+                            //def localEdition = editions[j]
                             sh "echo ${localEdition}"
                             sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
@@ -193,7 +193,7 @@ if (launchBehatTests.equals("yes")) {
                             sh "echo 'splitted ${tags}'"
 
                             for(int l = 0; l < tags.size(); l++) {
-                                //def localEdition = editions[j]
+                                def localEdition = editions[j]
                                 def localStorage = storages[k]
                                 def localPath = paths[i]
                                 def localTag = tags[l]
