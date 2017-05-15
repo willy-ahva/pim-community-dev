@@ -265,21 +265,12 @@ def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVers
                 sh "docker exec akeneo-behat bin/behat --format 'progress, Pim\\Behat\\Formatter\\JUnitFormatter' --rerun='app/logs/rerun${batch}.log' --out 'null,app/logs/' --config behat.ci.yml --strict -v --tags '@${batch}'"
             }
         } finally {
-            sh "cat vendor/akeneo/pim-community-dev/features/channel/browse_channels.feature"
-            sh "cat behat-list-log.txt"
             junit 'app/logs/*.xml'
             archiveArtifacts allowEmptyArchive: true, artifacts: 'app/build/screenshots/*.png, app/logs/rerun*.log'
             cleanUpEnvironment()
         }
     }
 }
-
-//--rerun='app/logs/rerun${batch}.log'
-//catch (error) {
-//            retry (retryNumber) {
-//                sh "docker exec akeneo-behat bin/behat --format 'progress, Pim\\Behat\\Formatter\\JUnitFormatter' --rerun='app/logs/rerun${batch}.log' --out 'null,app/logs/' --config behat.ci.yml --strict -v --tags '@${batch}'"
-//            }
-//        }
 
 def runGruntTest() {
     node('docker') {
