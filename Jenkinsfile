@@ -26,7 +26,7 @@ stage("Checkout") {
         //    choice(choices: '5\n1.7', description: 'ElasticSearch version to run behat with', name: 'esVersion')
         //])
 
-        storages = ["orm"]
+        storages = ["orm", "odm"]
         editions = ["ce", "ee"]
         features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
@@ -188,20 +188,10 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
                             def batches = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
-
-                            //sh "echo 'not splitted ${tags}'"
-
                             batches = batches.split('\r?\n')
-
-                            //sh "echo 'splitted ${tags}'"
 
                             for(int l = 0; l < tags.size(); l++) {
                                 def localBatch = batches[l]
-
-                                //sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
-                                //sh "echo ${localStorage}"
-                                //sh "echo ${localPath}"
-                                //sh "echo ${localTag}"
 
                                 tasks["behat-${localEdition}-${localStorage}-${localPath}-${localBatch}"] = {
                                     runBehatTest (localEdition, localStorage, localPath, localBatch, phpVersion, mysqlVersion, esVersion, retryNumber)
