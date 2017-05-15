@@ -163,15 +163,17 @@ if (launchBehatTests.equals("yes")) {
         def paths = features.split(' *, *')
 
         for(int i = 0; i < paths.size(); i++) {
+            def localPath = paths[i]
+
             for(int j = 0; j < editions.size(); j++) {
+                def localEdition = editions[j]
+
                 for(int k = 0; k < storages.size(); k++) {
+                    def tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
+                    def localStorage = storages[k]
+
                     node('docker') {
                         docker.image("carcel/php:5.6").inside() {
-                            def tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
-                            def localEdition = editions[j]
-                            def localStorage = storages[k]
-                            def localPath = paths[i]
-
                             if ('ce' == editions[j]) {
                                 unstash "pim_community_dev_full"
                             } else {
