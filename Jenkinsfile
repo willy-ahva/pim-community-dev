@@ -27,7 +27,7 @@ stage("Checkout") {
         //])
 
         storages = ["orm"]
-        editions = ["ee", "ce"]
+        editions = ["ce", "ee"]
         features = "features/channel" // vendor/akeneo/pim-community-dev/features/import/xlsx/
         launchUnitTests = "no"
         launchIntegrationTests = "no"
@@ -278,7 +278,7 @@ def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVers
             }
         } finally {
             junit 'app/logs/*.xml'
-            sh "cat app/logs/rerun-${batch}.log"
+            //sh "cat app/logs/rerun-${batch}.log"
             archiveArtifacts allowEmptyArchive: true, artifacts: 'app/build/screenshots/*.png, app/logs/rerun*.log'
             cleanUpEnvironment()
         }
