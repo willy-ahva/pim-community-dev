@@ -180,6 +180,7 @@ if (launchBehatTests.equals("yes")) {
                                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
                             }
 
+                            sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
                             tags = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
                             tags = tags.split('\r?\n')
                         }
