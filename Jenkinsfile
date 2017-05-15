@@ -190,10 +190,10 @@ if (launchBehatTests.equals("yes")) {
                             def localPath = paths[i]
                             def localTag = tags[l]
 
-                            sh "echo ${localEdition}"
-                            sh "echo ${localStorage}"
-                            sh "echo ${localPath}"
-                            sh "echo ${localPath}"
+                            sh "echo ${localEdition} ${localStorage} ${localPath} ${localTag}"
+                            //sh "echo ${localStorage}"
+                            //sh "echo ${localPath}"
+                            //sh "echo ${localTag}"
 
                             //tasks["behat-${editions[j]}-${storages[k]}-${paths[i]}-${tags[l]}"] = {
                             //    runBehatTest (localEdition, localStorage, localPath, localTag, phpVersion, mysqlVersion, esVersion, retryNumber)
