@@ -167,6 +167,7 @@ if (launchBehatTests.equals("yes")) {
 
             for(int j = 0; j < editions.size(); j++) {
                 def localEdition = editions[j]
+                def batches = [:]
 
                 for(int k = 0; k < storages.size(); k++) {
                     def tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
@@ -190,18 +191,17 @@ if (launchBehatTests.equals("yes")) {
                             sh "bin/behat-list \"${localPath}\" \"${tags}\""
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
-                            def batches = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
+                            def batchesList = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
                             //sh "echo ${batches}"
-                            def localBatches = [:]
-                            batches = batches.split('\r?\n')
+                            batches["${localEdition}-${localStorage}"] = batchesList.split('\r?\n')
 
                             //sh "echo 'batches'"
                             //sh "echo ${localBatches}"
 
-                            def batchSize = batches.size()
-                            sh "echo ${batchSize}"
-                            for(int l = 0; l < batches.size(); l++) {
-                                def batch = batches[l]
+                            //def batchSize = batches.size()
+                            //sh "echo ${batchSize}"
+                            for(int l = 0; l < batches["${localEdition}-${localStorage}"].size(); l++) {
+                                def batch = batches["${localEdition}-${localStorage}"][l]
 
                                 tasks["behat-${localEdition}-${localStorage}-${localPath}-${batch}"] = {
                                     runBehatTest (localEdition, localStorage, localPath, batch, phpVersion, mysqlVersion, esVersion, retryNumber)
