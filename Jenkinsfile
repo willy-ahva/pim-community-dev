@@ -191,7 +191,7 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
                             batches[localEdition][localStorage] = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
-                            sh "echo ${batches[localEdition][localStorage]}"
+                            //sh "echo ${batches[localEdition][localStorage]}"
                             def localBatches = batches[localEdition][localStorage].split('\r?\n')
 //                            sh "echo ${localBatches}"
 
