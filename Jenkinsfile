@@ -191,8 +191,9 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
                             batches[localEdition] = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
-                            sh "echo '${batches}'"
+                            sh "echo ${batches}"
                             def localBatches = batches[localEdition].split('\r?\n')
+                            sh "echo ${localBatches}"
 
                             for(int l = 0; l < localBatches.size(); l++) {
                                 def batch = localBatches[l]
@@ -214,7 +215,6 @@ if (launchBehatTests.equals("yes")) {
 def runBehatTest(edition, storage, path, batch, phpVersion, mysqlVersion, esVersion, retryNumber) {
     node('docker') {
         cleanUpEnvironment()
-        sh "echo ${batch}"
 
         def workspace = "/home/docker/pim"
         sh "docker network create akeneo"
