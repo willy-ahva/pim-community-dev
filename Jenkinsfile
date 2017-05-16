@@ -160,6 +160,7 @@ if (launchIntegrationTests.equals("yes")) {
 if (launchBehatTests.equals("yes")) {
     stage("Functional tests") {
         def tasks = [:]
+        def batches = [:]
         def paths = features.split(' *, *')
 
         for(int i = 0; i < paths.size(); i++) {
@@ -189,14 +190,14 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo ${localEdition}"
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
-                            def batches = sh returnStdout: true, script: "bin/behat-list \"${paths[i]}\" \"${tags}\""
-                            batches = batches.split('\r?\n')
+                            batches[localEdition] = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
+                            def localBatches = batches[localEdition].split('\r?\n')
 
-                            for(int l = 0; l < batches.size(); l++) {
-                                def localBatch = batches[l]
+                            for(int l = 0; l < localBatches.size(); l++) {
+                                def batch = localBatches[l]
 
-                                tasks["behat-${localEdition}-${localStorage}-${localPath}-${localBatch}"] = {
-                                    runBehatTest (localEdition, localStorage, localPath, localBatch, phpVersion, mysqlVersion, esVersion, retryNumber)
+                                tasks["behat-${localEdition}-${localStorage}-${localPath}-${batch}"] = {
+                                    runBehatTest (localEdition, localStorage, localPath, batch, phpVersion, mysqlVersion, esVersion, retryNumber)
                                 }
                             }
                         }
