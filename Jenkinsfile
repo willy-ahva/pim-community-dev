@@ -186,11 +186,11 @@ if (launchBehatTests.equals("yes")) {
                                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
                             }
 
-                            //sh "echo ${localEdition}"
+                            sh "echo ${localEdition}"
+                            sh "bin/behat-list \"${localPath}\" \"${tags}\""
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
-                            def batches = ''
-                            batches = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
+                            def batches = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
                             //sh "echo ${batches}"
                             def localBatches = [:]
                             batches = batches.split('\r?\n')
@@ -201,9 +201,7 @@ if (launchBehatTests.equals("yes")) {
                             def batchSize = batches.size()
                             sh "echo ${batchSize}"
                             for(int l = 0; l < batches.size(); l++) {
-                                sh "echo ${l}"
                                 def batch = batches[l]
-                                sh "echo ${batch}"
 
                                 tasks["behat-${localEdition}-${localStorage}-${localPath}-${batch}"] = {
                                     runBehatTest (localEdition, localStorage, localPath, batch, phpVersion, mysqlVersion, esVersion, retryNumber)
