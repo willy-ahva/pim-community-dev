@@ -194,7 +194,9 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo ${batches}"
                             def localBatches = [:]
                             localBatches = batches.split('\r?\n')
-//                            sh "echo ${localBatches}"
+
+                            sh "echo 'batches'"
+                            sh "echo ${localBatches}"
 
 
                             for(int l = 0; l < localBatches.size(); l++) {
