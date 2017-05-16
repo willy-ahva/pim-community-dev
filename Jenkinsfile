@@ -174,7 +174,7 @@ if (launchBehatTests.equals("yes")) {
 
                     node('docker') {
                         docker.image("carcel/php:5.6").inside() {
-                            if ('ce' == editions[j]) {
+                            if ('ce' == localEdition) {
                                 unstash "pim_community_dev_full"
                             } else {
                                 unstash "pim_enterprise_dev_full"
@@ -195,6 +195,7 @@ if (launchBehatTests.equals("yes")) {
                             def localBatches = [:]
                             localBatches = batches.split('\r?\n')
 //                            sh "echo ${localBatches}"
+                            localBatches.dump()
 
                             for(int l = 0; l < localBatches.size(); l++) {
                                 def batch = localBatches[l]
