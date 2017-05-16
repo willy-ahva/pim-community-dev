@@ -160,7 +160,6 @@ if (launchIntegrationTests.equals("yes")) {
 if (launchBehatTests.equals("yes")) {
     stage("Functional tests") {
         def tasks = [:]
-        def batches = [:]
         def paths = features.split(' *, *')
 
         for(int i = 0; i < paths.size(); i++) {
