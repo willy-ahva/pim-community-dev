@@ -60,7 +60,7 @@ stage("Checkout") {
         }
     }
 
-    checkouts = [:];
+    checkouts = [:]
     checkouts['community'] = {
         node('docker') {
             cleanUpEnvironment()
@@ -195,7 +195,7 @@ if (launchBehatTests.equals("yes")) {
                             def localBatches = [:]
                             localBatches = batches.split('\r?\n')
 //                            sh "echo ${localBatches}"
-                            localBatches.dump()
+
 
                             for(int l = 0; l < localBatches.size(); l++) {
                                 def batch = localBatches[l]
