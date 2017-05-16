@@ -193,14 +193,17 @@ if (launchBehatTests.equals("yes")) {
                             batches = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
                             //sh "echo ${batches}"
                             def localBatches = [:]
-                            localBatches = batches.split('\r?\n')
+                            batches = batches.split('\r?\n')
 
-                            sh "echo 'batches'"
-                            sh "echo ${localBatches}"
+                            //sh "echo 'batches'"
+                            //sh "echo ${localBatches}"
 
-
-                            for(int l = 0; l < localBatches.size(); l++) {
-                                def batch = localBatches[l]
+                            def batchSize = batches.size()
+                            sh "echo ${batchSize}"
+                            for(int l = 0; l < batches.size(); l++) {
+                                sh "echo ${l}"
+                                def batch = batches[l]
+                                sh "echo ${batch}"
 
                                 tasks["behat-${localEdition}-${localStorage}-${localPath}-${batch}"] = {
                                     runBehatTest (localEdition, localStorage, localPath, batch, phpVersion, mysqlVersion, esVersion, retryNumber)
