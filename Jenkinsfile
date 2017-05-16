@@ -167,7 +167,6 @@ if (launchBehatTests.equals("yes")) {
 
             for(int j = 0; j < editions.size(); j++) {
                 def localEdition = editions[j]
-                def batches = [:]
 
                 for(int k = 0; k < storages.size(); k++) {
                     def tags = "~skip&&~skip-pef&&~doc&&~unstable&&~unstable-app&&~deprecated&&~@unstable-app"
