@@ -187,21 +187,18 @@ if (launchBehatTests.equals("yes")) {
                                 sh "cp vendor/akeneo/pim-community-dev/bin/behat-list bin/"
                             }
 
-                            sh "echo ${localEdition}"
-                            sh "bin/behat-list \"${localPath}\" \"${tags}\""
-                            //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
-
-                            def batchesList = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
-                            //sh "echo ${batches}"
-                            batches["${localEdition}-${localStorage}"] = batchesList.split('\r?\n')
+                            def batchesList = ''
+                            batchesList = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
+                            def batches = new ArrayList<String>()
+                            batches = batchesList.split('\r?\n')
 
                             //sh "echo 'batches'"
                             //sh "echo ${localBatches}"
 
                             //def batchSize = batches.size()
                             //sh "echo ${batchSize}"
-                            for(int l = 0; l < batches["${localEdition}-${localStorage}"].size(); l++) {
-                                def batch = batches["${localEdition}-${localStorage}"][l]
+                            for(int l = 0; l < batches.size(); l++) {
+                                def batch = batches[l]
 
                                 tasks["behat-${localEdition}-${localStorage}-${localPath}-${batch}"] = {
                                     runBehatTest (localEdition, localStorage, localPath, batch, phpVersion, mysqlVersion, esVersion, retryNumber)
