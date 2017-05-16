@@ -189,9 +189,11 @@ if (launchBehatTests.equals("yes")) {
                             //sh "echo ${localEdition}"
                             //sh "echo 'bin/behat-list ${paths[i]} ${tags}'"
 
-                            def batches = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
+                            def batches = ''
+                            batches = sh returnStdout: true, script: "bin/behat-list \"${localPath}\" \"${tags}\""
                             //sh "echo ${batches}"
-                            def localBatches = batches.split('\r?\n')
+                            def localBatches = [:]
+                            localBatches = batches.split('\r?\n')
 //                            sh "echo ${localBatches}"
 
                             for(int l = 0; l < localBatches.size(); l++) {
