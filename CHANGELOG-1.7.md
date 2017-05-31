@@ -1,6 +1,6 @@
-# 1.7.101 (2017-05-30)
+1.7.101 (2017-05-30)
 
-## Bug Fixes
+Bug Fixes
 
 - PIM-6394: Fix email validation when creating a user in order to be less restrictive
 - GITHUB-6161: Fix JobInstance class hardcoded in `Akeneo\Bundle\BatchBundle\Command\BatchCommand::execute`
