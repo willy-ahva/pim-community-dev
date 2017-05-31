@@ -13,7 +13,7 @@ Feature: Create a channel
     And I fill in the following information:
       | Code                    | foo             |
       | Category tree           | 2014 collection |
-      | Currencies              | EUR             |
+      | Currencies              | USD             |
       | Locales                 | French          |
       | English (United States) | Bar Bar         |
     And I press the "Save" button
