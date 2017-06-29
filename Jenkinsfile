@@ -7,7 +7,9 @@ stage("Provision") {
         node("provisioner") {
             container("provisioner") {
                 sh "kubectl apply -f .ci/k8s/"
-                sh "top"
+                sh "ls"
+                sh "touch toto.txt"
+                sh "cat toto.txt"
             }
         }
     }
