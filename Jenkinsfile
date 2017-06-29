@@ -2,12 +2,10 @@
 
 stage("Provision") {
     podTemplate(label: "provisioner", containers: [
-        containerTemplate(name: "provisioner", image: "lachlanevenson/k8s-kubectl:latest", command: "cat", ttyEnabled: true)
+        containerTemplate(name: "provisioner", image: "lachlanevenson/k8s-kubectl:latest", command: "apply -f .ci/k8s/", ttyEnabled: true)
     ]) {
         node("provisioner") {
-            container("provisioner") {
-                sh "apply -f .ci/k8s/"
-            }
+            sh "ls"
         }
     }
 }
