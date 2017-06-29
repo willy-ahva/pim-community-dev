@@ -2,7 +2,7 @@
 
 stage("Provision") {
     podTemplate(label: "provisioner", containers: [
-        containerTemplate(name: "provisioner", image: "lachlanevenson/k8s-kubectl")])
+        containerTemplate(name: "provisioner", image: "lachlanevenson/k8s-kubectl")
     ]) {
         node("provisioner") {
             container("provisioner") {
