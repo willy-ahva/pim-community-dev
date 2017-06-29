@@ -2,14 +2,11 @@
 
 stage("Provision") {
     podTemplate(label: "provisioner", containers: [
-        containerTemplate(name: "provisioner", image: "lachlanevenson/k8s-kubectl:latest")
+        containerTemplate(name: "provisioner", image: "lachlanevenson/k8s-kubectl:latest", command: "cat", ttyEnabled: true)
     ]) {
         node("provisioner") {
             container("provisioner") {
                 sh "kubectl apply -f .ci/k8s/"
-                sh "ls"
-                sh "touch toto.txt"
-                sh "cat toto.txt"
             }
         }
     }
