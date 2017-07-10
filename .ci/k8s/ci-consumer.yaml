@@ -1,19 +1,24 @@
-apiVersion: extensions/v1beta1
+apiVersion: batch/v1
 kind: Job
 metadata:
   name: ci-consumer
 spec:
   template:
+    replicas: 1
     metadata:
       labels:
         name: ci-consumer
     spec:
-      strategy:
-        maxUnavailable: 1
-        maxSurge: 1
+      completions: 1
+#      strategy:
+#        maxUnavailable: 1
+#        maxSurge: 1
       containers:
-        - name: pull_messages
+        - name: pull-messages
           image: eu.gcr.io/akeneo-ci/pubsub:latest
+          command: ["php"]
+          args: ["pull-messages", "akeneo-ci-topic"]
           env:
           - name: PUBSUB_PROJECT_ID
             value: akeneo-ci
+      restartPolicy: Never
