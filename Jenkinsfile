@@ -6,7 +6,7 @@ stage("Provision") {
     ]) {
         node("provisioner") {
             container("provisioner") {
-                sh "kubectl apply -f .ci/k8s/" # -e topic
+                sh "kubectl apply -f .ci/k8s/"
             }
         }
     }
