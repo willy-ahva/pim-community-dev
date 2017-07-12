@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ci-consumer
+spec:
+#  Best thing to do is to put a placeholder instead of and scale in terms of the queue size
+  completions: 5
+  template:
+    metadata:
+      labels:
+        name: ci-consumer
+    spec:
+      containers:
+        - name: pull-messages
+          image: eu.gcr.io/akeneo-ci/pubsub:latest
+          command: ["php"]
+          args: ["pull-messages", "akeneo-ci-abo"]
+          env:
+          - name: PUBSUB_PROJECT_ID
+            value: akeneo-ci
+      restartPolicy: Never
