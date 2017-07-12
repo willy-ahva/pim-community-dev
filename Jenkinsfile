@@ -22,7 +22,7 @@ stage("Push") {
         node("push") {
             container("pubsub") {
                 sh "create-topic akeneo-ci-topic"
-                sh "push-message akeneo-ci-topic \"docker exec php php -i\""
+                sh "push-message akeneo-ci-topic \"docker exec php -i\""
             }
         }
     }
